@@ -1,99 +1,89 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+# Movie & User API - NestJS Server (v2)
 
-## Description
+Esta es una API REST robusta construida con **NestJS** y **MongoDB**. A diferencia de versiones anteriores, este servidor no solo gestiona un catálogo de películas, sino que también incluye un sistema completo de **usuarios, autenticación segura y una lista personalizada de películas favoritas**.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🛠️ Tecnologías y Librerías
 
-## Project setup
+* **Framework**: [NestJS](https://nestjs.com/)
+* **Base de Datos**: MongoDB con **Mongoose** (Modelos y Schemas)
+* **Seguridad**:
+* `bcrypt`: Hashing de contraseñas.
+* `@nestjs/jwt`: Generación y validación de tokens.
+* **Guards**: Protectores de rutas personalizados (`AuthGuard`).
 
-```bash
-$ npm install
+
+* **Validación**: `class-validator` y `class-transformer` mediante DTOs.
+
+## 🚀 Configuración del Proyecto
+
+1. **Variables de Entorno (`.env`)**:
+Es necesario configurar las siguientes variables para que el servidor funcione:
+```env
+URI=tu_conexion_mongodb_atlas
+SECRET=clave_secreta_para_jwt
+
 ```
 
-## Compile and run the project
 
+2. **Instalación y despliegue**:
 ```bash
-# development
-$ npm run start
+npm install
+npm run start:dev
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
 ```
 
-## Run tests
 
-```bash
-# unit tests
-$ npm run test
 
-# e2e tests
-$ npm run test:e2e
+## 🛣️ Endpoints de la API
 
-# test coverage
-$ npm run test:cov
-```
+La API está estructurada bajo el prefijo global `/api/v1`.
 
-## Deployment
+### 🎬 Películas (`/movies`)
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+* `GET /`: Listado completo.
+* `GET /paginated`: Listado con soporte de paginación.
+* `POST /create`: Añadir nueva película.
+* `PUT /update/:id` & `PATCH /update/:id`: Edición de registros.
+* `DELETE /delete/:id`: Eliminación física de la base de datos.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 👤 Usuarios y Autenticación (`/users`)
 
-```bash
-$ npm install -g mau
-$ mau deploy
-```
+* `POST /register`: Crea un nuevo usuario con contraseña encriptada.
+* `POST /login`: Valida credenciales y devuelve un **JWT**.
+* `GET /user-info`: (Protegido) Devuelve la información del usuario autenticado a través del token.
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### ❤️ Favoritos (Gestión entre colecciones)
 
-## Resources
+Estas rutas requieren que el usuario esté autenticado enviando el token en la cabecera `x-token`.
 
-Check out a few resources that may come in handy when working with NestJS:
+* `POST /favorites/:movieId`: Añade una película al array de favoritos del usuario.
+* `GET /favorites`: Recupera la lista de películas favoritas del usuario (utiliza `populate` para traer los datos de las películas, no solo los IDs).
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## 🛡️ Características de Seguridad Avanzadas
 
-## Support
+### AuthGuard Personalizado
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Se ha implementado un `AuthGuard` que:
 
-## Stay in touch
+1. Extrae el token de la cabecera `x-token`.
+2. Verifica la validez del token mediante el `JwtService`.
+3. Inyecta el **payload** (datos del usuario) directamente en el objeto `Request`. Esto permite que los controladores accedan al `userId` de forma segura sin tener que decodificar el token de nuevo.
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Validación de Datos (DTOs)
 
-## License
+Cada entrada de datos está protegida por objetos de transferencia de datos que aseguran:
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+* Formatos de Email válidos.
+* Longitudes mínimas de contraseña.
+* Tipos de datos correctos en los campos de películas (títulos, años, ratings).
+
+## 🗃️ Modelos de Datos
+
+* **Movie Schema**: Contiene títulos, géneros, año, director y un objeto anidado para datos de IMDB.
+* **User Schema**: Contiene email, nombre de usuario, contraseña (hash) y una referencia (`type: Schema.Types.ObjectId`) a la colección de películas para los favoritos.
+
+---
+
+*Este proyecto forma parte de la formación de **Digitech Progresa** para el desarrollo de APIs profesionales con Node.js por **Francisco Belda** *
